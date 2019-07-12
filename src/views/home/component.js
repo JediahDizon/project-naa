@@ -127,6 +127,7 @@ export default class extends Component {
 					_.isArray(data) && !_.isEmpty(data) && (
 						<Swiper
 							infinite
+							keyExtractor={card => card.id}
 							verticalSwipe={false}
 							horizontalSwipe={!lock}
 							marginTop={0}
@@ -235,13 +236,17 @@ export default class extends Component {
 	renderCardBack(video) {
 		const { Videos: { loading }} = this.props;
 
-		const { height } = Dimensions.get("window");
+		const { height, width } = Dimensions.get("window");
+		const aspectRatio = height/width;
+
 		return (
 			<ScrollView style={{ flex: 1, paddingTop: 20 }}>
 				<TouchableWithoutFeedback onPress={() => this.setState({ lock: false }, () => this[video.id].flip())}>
 					<Card
 						style={{
-							margin: 10,
+							marginLeft: aspectRatio > 1.4 ? 0 : 20,
+							marginRight: aspectRatio > 1.4 ? 0 : 20,
+							marginBottom: height / 5,
 							marginTop: height / 3
 						}}
 					>

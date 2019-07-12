@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { View, Image, TouchableOpacity, UIManager, LayoutAnimation } from "react-native";
-import { ProgressBar, Colors } from "react-native-paper";
+import { View, Image, TouchableOpacity, Animated } from "react-native";
+import { Colors } from "react-native-paper";
 import RNSoundLevel from "react-native-sound-level";
 import * as Progress from "react-native-progress";
 
@@ -16,25 +16,24 @@ export default class extends Component {
 			realtime: {
 				value: 0,
 				live: false
+			},
+			animated: {
+				size: console.warn(new Animated.Value(0)) || new Animated.Value(0)
 			}
 		};
 	}
 
 	shouldComponentUpdate() {
-		LayoutAnimation.configureNext({ ...LayoutAnimation.Presets.easeInEaseOut, duration: 50 });
+		// LayoutAnimation.configureNext({ ...LayoutAnimation.Presets.easeInEaseOut, duration: 50 });
 		return true;
 	}
 
-	componentDidMount() {
-		UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
-	}
-
 	componentWillUnmount() {
-		RNSoundLevel.stop();
+		this.stopRecording();
 	}
 
 	render() {
-		const { realtime: { value, live }} = this.state;
+		const { realtime: { value, live }, animated } = this.state;
 
 		return (
 			<View
@@ -45,24 +44,24 @@ export default class extends Component {
 				}}
 			>
 				<View style={{ position: "absolute" }}>
-					<Image
+					<Animated.Image
 						source={{uri: "https://www.adorama.com/images/Large/ro25.jpg" }}
 						style={{
-							height: 200 * Utils.convertDecibelToPercent(value) / 100,
-							width: 200 * Utils.convertDecibelToPercent(value) / 100,
+							height: 200 * animated.size || 200,
+							width: 200 * animated.size || 200,
 							borderRadius: 100,
-							opacity: Math.pow(Utils.convertDecibelToPercent(value) / 100, 8),
+							opacity: Math.pow(animated.size, 8),
 							alignItems: "center",
-							justifyContent: "center"
+							justifyContent: "center",
+							transition: "all .5s"
 						}}
 					/>
 				</View>
-
 				<View style={{ position: "absolute" }}>
 					<TouchableOpacity onPress={() => live ? this.stopRecording() : this.startRecording()}>
 						<Progress.Pie
 							size={100}
-							progress={Utils.convertDecibelToPercent(value) / 100}
+							progress={animated.size}
 							unfilledColor={Colors.white}
 						/>
 					</TouchableOpacity>
@@ -82,7 +81,15 @@ export default class extends Component {
 		}, () => {
 			RNSoundLevel.start();
 			RNSoundLevel.onNewFrame = data => {
-				this.setState({ realtime: { ...this.state.realtime, value: data.value }});
+				this.setState({ realtime: { ...this.state.realtime, value: data.value }}, () => {
+					Animated.timing(
+						this.state.animated.size, // The animated value to drive
+						{
+							toValue: Utils.convertDecibelToPercent(data.value) / 100,
+							duration: 333, // Make it take a while
+						}
+					).start();
+				});
 			};
 		});
 	}
