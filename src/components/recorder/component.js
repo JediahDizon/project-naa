@@ -1,24 +1,40 @@
 import React, { Component } from "react";
-import { View, Image, TouchableOpacity, Animated } from "react-native";
-import { Colors } from "react-native-paper";
+import { Text, View, Image, TouchableOpacity, Animated } from "react-native";
+import { Colors, IconButton } from "react-native-paper";
 import RNSoundLevel from "react-native-sound-level";
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import * as Progress from "react-native-progress";
 
 // UTILS
+import _ from "lodash";
 import Utils from "./utils";
+import { Histogram } from "./components";
 
 
-export default class extends Component {
+export default class Recorder extends Component {
 	constructor(props) {
 		super(props);
+
+		this.recorder = new AudioRecorderPlayer();
+
+		this.animated = {
+			backMic: {
+				size: new Animated.Value(0),
+				opacity: new Animated.Value(0)
+			},
+			frontMic: {
+				progress: new Animated.Value(0)
+			}
+		};
 
 		this.state = {
 			realtime: {
 				value: 0,
 				live: false
 			},
-			animated: {
-				size: console.warn(new Animated.Value(0)) || new Animated.Value(0)
+			histogram: {
+				loading: false,
+				data: []
 			}
 		};
 	}
@@ -33,7 +49,8 @@ export default class extends Component {
 	}
 
 	render() {
-		const { realtime: { value, live }, animated } = this.state;
+		const { backMic } = this.animated;
+		const { realtime: { value, live }, histogram} = this.state;
 
 		return (
 			<View
@@ -43,35 +60,48 @@ export default class extends Component {
 					alignItems: "center"
 				}}
 			>
-				<View style={{ position: "absolute" }}>
+				<View
+					style={{
+						position: "absolute",
+						alignItems: "center",
+						justifyContent: "center"
+					}}
+				>
+					<Histogram data={histogram.data} />
+				</View>
+
+				<View
+					style={{
+						position: "absolute",
+						alignItems: "center",
+						justifyContent: "center"
+					}}
+				>
 					<Animated.Image
-						source={{uri: "https://www.adorama.com/images/Large/ro25.jpg" }}
+						source={{ uri: "https://www.adorama.com/images/Large/ro25.jpg" }}
 						style={{
-							height: 200 * animated.size || 200,
-							width: 200 * animated.size || 200,
-							borderRadius: 100,
-							opacity: Math.pow(animated.size, 8),
-							alignItems: "center",
-							justifyContent: "center",
-							transition: "all .5s"
+							borderRadius: backMic.size,
+							height: backMic.size,
+							width: backMic.size,
+							opacity: backMic.opacity
 						}}
 					/>
 				</View>
+
 				<View style={{ position: "absolute" }}>
-					<TouchableOpacity onPress={() => live ? this.stopRecording() : this.startRecording()}>
-						<Progress.Pie
-							size={100}
-							progress={animated.size}
-							unfilledColor={Colors.white}
-						/>
-					</TouchableOpacity>
+					<IconButton
+						mode="contained"
+						icon="mic"
+						color={Colors.red500}
+						onPress={() => live ? this.stopRecording() : this.startRecording()}
+					/>
 				</View>
 			</View>
 		);
 	}
 
 	startRecording() {
-		const { realtime } = this.state;
+		const { realtime, histogram } = this.state;
 
 		this.setState({
 			realtime: {
@@ -81,12 +111,28 @@ export default class extends Component {
 		}, () => {
 			RNSoundLevel.start();
 			RNSoundLevel.onNewFrame = data => {
-				this.setState({ realtime: { ...this.state.realtime, value: data.value }}, () => {
+				const { histogram } = this.state;
+				const toSave = Utils.convertDecibelToPercent(data.value) / 100;
+
+				this.setState({
+					histogram: {
+						...histogram,
+						data: [...histogram.data, toSave]
+					}
+				}, () => {
 					Animated.timing(
-						this.state.animated.size, // The animated value to drive
+						this.animated.backMic.size, // The animated value to drive
 						{
-							toValue: Utils.convertDecibelToPercent(data.value) / 100,
-							duration: 333, // Make it take a while
+							toValue: 200 * toSave,
+							duration: 333
+						}
+					).start();
+
+					Animated.timing(
+						this.animated.backMic.opacity, // The animated value to drive
+						{
+							toValue: 0.33 * toSave,
+							duration: 333
 						}
 					).start();
 				});

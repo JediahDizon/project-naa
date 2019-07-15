@@ -241,26 +241,27 @@ export default class extends Component {
 
 		return (
 			<ScrollView style={{ flex: 1, paddingTop: 20 }}>
-				<TouchableWithoutFeedback onPress={() => this.setState({ lock: false }, () => this[video.id].flip())}>
-					<Card
-						style={{
-							marginLeft: aspectRatio > 1.4 ? 0 : 20,
-							marginRight: aspectRatio > 1.4 ? 0 : 20,
-							marginBottom: height / 5,
-							marginTop: height / 3
-						}}
-					>
-						<Card.Content style={{ minHeight: height / 3 }}>
-							{
-								loading ? (
-									<ActivityIndicator style={{ margin: 30 }} />
-								) : (
-									<Recorder />
-								)
-							}
-						</Card.Content>
-					</Card>
-				</TouchableWithoutFeedback>
+				<Card
+					style={{
+						marginLeft: aspectRatio > 1.4 ? 0 : 20,
+						marginRight: aspectRatio > 1.4 ? 0 : 20,
+						marginBottom: height / 5,
+						marginTop: height / 3
+					}}
+				>
+					<Card.Content style={{ minHeight: height / 3 }}>
+						{
+							loading ? (
+								<ActivityIndicator style={{ margin: 30 }} />
+							) : (
+								<Recorder />
+							)
+						}
+					</Card.Content>
+					<Card.Actions>
+						<PaperButton icon="close" onPress={() => this.setState({ lock: false }, () => this[video.id].flip())}>Cancel</PaperButton>
+					</Card.Actions>
+				</Card>
 			</ScrollView>
 		);
 	}
