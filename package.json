@@ -16,6 +16,7 @@
     "react": "16.8.3",
     "react-native": "0.59.8",
     "react-native-audio-recorder-player": "^2.2.0",
+    "react-native-audiowaveform": "^2.0.3",
     "react-native-card-flip": "^1.0.4",
     "react-native-deck-swiper": "^1.6.7",
     "react-native-easy-grid": "^0.2.1",

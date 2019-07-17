@@ -64,6 +64,8 @@
 		385149755DF64591AEF36336 /* libRCTYouTube.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 54A1932C53684CD997A74E0E /* libRCTYouTube.a */; };
 		C8215F335ED749AE8F46DEC3 /* libRNSoundRecorder.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 001FFF4F26B1426D9A15C370 /* libRNSoundRecorder.a */; };
 		2FC5B727CA2D44ACB8DDA7A8 /* libRNSoundLevel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 62ACA410221D4E0A960519F0 /* libRNSoundLevel.a */; };
+		B67D055BCA834FFAAF401822 /* libOGReactNativeWaveform.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB59997417204B34A9A7AFE8 /* libOGReactNativeWaveform.a */; };
+		E5832D7E0BDA48A58F47D25B /* libRNAudioRecorderPlayer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9437914C3AC46329BA1A232 /* libRNAudioRecorderPlayer.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -403,6 +405,10 @@
 		001FFF4F26B1426D9A15C370 /* libRNSoundRecorder.a */ = {isa = PBXFileReference; name = "libRNSoundRecorder.a"; path = "libRNSoundRecorder.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		1D1F3967E04B4482907176F7 /* RNSoundLevel.xcodeproj */ = {isa = PBXFileReference; name = "RNSoundLevel.xcodeproj"; path = "../node_modules/react-native-sound-level/ios/RNSoundLevel.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		62ACA410221D4E0A960519F0 /* libRNSoundLevel.a */ = {isa = PBXFileReference; name = "libRNSoundLevel.a"; path = "libRNSoundLevel.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		FDBB96183CBB4BF0A61C9954 /* OGReactNativeWaveform.xcodeproj */ = {isa = PBXFileReference; name = "OGReactNativeWaveform.xcodeproj"; path = "../node_modules/react-native-audiowaveform/ios/OGReactNativeWaveform.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		BB59997417204B34A9A7AFE8 /* libOGReactNativeWaveform.a */ = {isa = PBXFileReference; name = "libOGReactNativeWaveform.a"; path = "libOGReactNativeWaveform.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		9F5DF18713C346D6B6DB997D /* RNAudioRecorderPlayer.xcodeproj */ = {isa = PBXFileReference; name = "RNAudioRecorderPlayer.xcodeproj"; path = "../node_modules/react-native-audio-recorder-player/ios/RNAudioRecorderPlayer.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		D9437914C3AC46329BA1A232 /* libRNAudioRecorderPlayer.a */ = {isa = PBXFileReference; name = "libRNAudioRecorderPlayer.a"; path = "libRNAudioRecorderPlayer.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -438,6 +444,8 @@
 				385149755DF64591AEF36336 /* libRCTYouTube.a in Frameworks */,
 				C8215F335ED749AE8F46DEC3 /* libRNSoundRecorder.a in Frameworks */,
 				2FC5B727CA2D44ACB8DDA7A8 /* libRNSoundLevel.a in Frameworks */,
+				B67D055BCA834FFAAF401822 /* libOGReactNativeWaveform.a in Frameworks */,
+				E5832D7E0BDA48A58F47D25B /* libRNAudioRecorderPlayer.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -636,6 +644,8 @@
 				38A16CE279E34E4A8B955515 /* RCTYouTube.xcodeproj */,
 				A7EC44195B9143618FC94E33 /* RNSoundRecorder.xcodeproj */,
 				1D1F3967E04B4482907176F7 /* RNSoundLevel.xcodeproj */,
+				FDBB96183CBB4BF0A61C9954 /* OGReactNativeWaveform.xcodeproj */,
+				9F5DF18713C346D6B6DB997D /* RNAudioRecorderPlayer.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1306,6 +1316,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1316,6 +1328,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-youtube/**",
 					"$(SRCROOT)\..\node_modules\react-native-sound-recorder\ios",
 					"$(SRCROOT)\..\node_modules\react-native-sound-level/**",
+					"$(SRCROOT)\..\node_modules\react-native-audiowaveform\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-audio-recorder-player\ios",
 				);
 			};
 			name = Debug;
@@ -1339,6 +1353,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1349,6 +1365,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-youtube/**",
 					"$(SRCROOT)\..\node_modules\react-native-sound-recorder\ios",
 					"$(SRCROOT)\..\node_modules\react-native-sound-level/**",
+					"$(SRCROOT)\..\node_modules\react-native-audiowaveform\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-audio-recorder-player\ios",
 				);
 			};
 			name = Release;
@@ -1378,6 +1396,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-youtube/**",
 					"$(SRCROOT)\..\node_modules\react-native-sound-recorder\ios",
 					"$(SRCROOT)\..\node_modules\react-native-sound-level/**",
+					"$(SRCROOT)\..\node_modules\react-native-audiowaveform\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-audio-recorder-player\ios",
 				);
 			};
 			name = Debug;
@@ -1406,6 +1426,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-youtube/**",
 					"$(SRCROOT)\..\node_modules\react-native-sound-recorder\ios",
 					"$(SRCROOT)\..\node_modules\react-native-sound-level/**",
+					"$(SRCROOT)\..\node_modules\react-native-audiowaveform\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-audio-recorder-player\ios",
 				);
 			};
 			name = Release;
@@ -1437,6 +1459,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1447,6 +1471,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-youtube/**",
 					"$(SRCROOT)\..\node_modules\react-native-sound-recorder\ios",
 					"$(SRCROOT)\..\node_modules\react-native-sound-level/**",
+					"$(SRCROOT)\..\node_modules\react-native-audiowaveform\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-audio-recorder-player\ios",
 				);
 			};
 			name = Debug;
@@ -1478,6 +1504,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1488,6 +1516,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-youtube/**",
 					"$(SRCROOT)\..\node_modules\react-native-sound-recorder\ios",
 					"$(SRCROOT)\..\node_modules\react-native-sound-level/**",
+					"$(SRCROOT)\..\node_modules\react-native-audiowaveform\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-audio-recorder-player\ios",
 				);
 			};
 			name = Release;
@@ -1518,6 +1548,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1528,6 +1560,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-youtube/**",
 					"$(SRCROOT)\..\node_modules\react-native-sound-recorder\ios",
 					"$(SRCROOT)\..\node_modules\react-native-sound-level/**",
+					"$(SRCROOT)\..\node_modules\react-native-audiowaveform\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-audio-recorder-player\ios",
 				);
 			};
 			name = Debug;
@@ -1558,6 +1592,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1568,6 +1604,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-youtube/**",
 					"$(SRCROOT)\..\node_modules\react-native-sound-recorder\ios",
 					"$(SRCROOT)\..\node_modules\react-native-sound-level/**",
+					"$(SRCROOT)\..\node_modules\react-native-audiowaveform\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-audio-recorder-player\ios",
 				);
 			};
 			name = Release;

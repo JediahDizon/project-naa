@@ -3,6 +3,8 @@ package com.projectnaa;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.dooboolab.RNAudioRecorderPlayerPackage;
+import com.otomogroove.OGReactNativeWaveform.OGWavePackage;
 import com.punarinta.RNSoundLevel.RNSoundLevel;
 import com.kevinresol.react_native_sound_recorder.RNSoundRecorderPackage;
 import com.entria.views.RNViewOverflowPackage;
@@ -31,6 +33,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNAudioRecorderPlayerPackage(),
+            new OGWavePackage(),
             new RNSoundLevel(),
             new RNSoundRecorderPackage(),
             new RNViewOverflowPackage(),

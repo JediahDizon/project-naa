@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { Text, View, Image, TouchableOpacity, Animated } from "react-native";
+import { View, ScrollView, FlatList, StyleSheet, Animated } from "react-native";
 import { Colors, IconButton } from "react-native-paper";
 import RNSoundLevel from "react-native-sound-level";
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
-import * as Progress from "react-native-progress";
+import WaveForm from 'react-native-audiowaveform';
 
 // UTILS
 import _ from "lodash";
@@ -49,9 +49,6 @@ export default class Recorder extends Component {
 	}
 
 	render() {
-		const { backMic } = this.animated;
-		const { realtime: { value, live }, histogram} = this.state;
-
 		return (
 			<View
 				style={{
@@ -60,23 +57,59 @@ export default class Recorder extends Component {
 					alignItems: "center"
 				}}
 			>
-				<View
-					style={{
-						position: "absolute",
-						alignItems: "center",
-						justifyContent: "center"
-					}}
-				>
-					<Histogram data={histogram.data} />
-				</View>
 
-				<View
-					style={{
-						position: "absolute",
-						alignItems: "center",
-						justifyContent: "center"
-					}}
+				{ this.renderHistogram() }
+				{ this.renderMicrophone() }
+
+			</View>
+		);
+	}
+
+	renderHistogram() {
+		const { histogram: { data }} = this.state;
+		return (
+			<React.Fragment>
+				<ScrollView
+					horizontal
+					style={{ height: 100 }}
+					ref={ref => this.histogram = ref}
+					onContentSizeChange={() => this.histogram.scrollToEnd({ animated: true })}
 				>
+					<FlatList
+						horizontal
+						data={data}
+						keyExtractor={(a, index) => `${index}`}
+						renderItem={({ item }) => (
+							<View
+								style={{
+									height: (item * 50),
+									opacity: item,
+									width: 1,
+									margin: 0,
+									borderRadius: 0,
+									backgroundColor: "red",
+								}}
+							/>
+						)}
+					/>
+				</ScrollView>
+			</React.Fragment>
+		);
+	}
+
+	renderMicrophone() {
+		const { backMic } = this.animated;
+		const { realtime: { live }} = this.state;
+
+		return (
+			<View
+				style={{
+					flex: 1,
+					alignItems: "center",
+					justifyContent: "center"
+				}}
+			>
+				<View style={{ position: "absolute" }}>
 					<Animated.Image
 						source={{ uri: "https://www.adorama.com/images/Large/ro25.jpg" }}
 						style={{
@@ -93,7 +126,7 @@ export default class Recorder extends Component {
 						mode="contained"
 						icon="mic"
 						color={Colors.red500}
-						onPress={() => live ? this.stopRecording() : this.startRecording()}
+						onPress={async () => live ? await this.stopRecording() : await this.startRecording()}
 					/>
 				</View>
 			</View>
@@ -101,57 +134,66 @@ export default class Recorder extends Component {
 	}
 
 	startRecording() {
-		const { realtime, histogram } = this.state;
+		const { realtime } = this.state;
 
-		this.setState({
-			realtime: {
-				...realtime,
-				live: true
-			}
-		}, () => {
-			RNSoundLevel.start();
-			RNSoundLevel.onNewFrame = data => {
-				const { histogram } = this.state;
-				const toSave = Utils.convertDecibelToPercent(data.value) / 100;
+		let filePath = null;
+		return this.recorder.startRecorder()
+		.then(path => {
+			filePath = path;
+			console.warn(filePath);
+		})
+		.then(() => {
+			this.setState({
+				realtime: {
+					...realtime,
+					live: true
+				}
+			}, () => {
+				// Loudness Listeners
+				// RNSoundLevel.start();
+				// RNSoundLevel.onNewFrame = data => {
+				// 	const { histogram } = this.state;
+				// 	const toSave = Utils.convertDecibelToPercent(data.value) / 100;
 
-				this.setState({
-					histogram: {
-						...histogram,
-						data: [...histogram.data, toSave]
-					}
-				}, () => {
-					Animated.timing(
-						this.animated.backMic.size, // The animated value to drive
-						{
-							toValue: 200 * toSave,
-							duration: 333
-						}
-					).start();
+				// 	this.setState({
+				// 		histogram: {
+				// 			...histogram,
+				// 			data: [...histogram.data, toSave]
+				// 		}
+				// 	}, () => {
+				// 		Animated.timing(
+				// 			this.animated.backMic.size, // The animated value to drive
+				// 			{
+				// 				toValue: 100 * toSave,
+				// 				duration: 333
+				// 			}
+				// 		).start();
 
-					Animated.timing(
-						this.animated.backMic.opacity, // The animated value to drive
-						{
-							toValue: 0.33 * toSave,
-							duration: 333
-						}
-					).start();
-				});
-			};
+				// 		Animated.timing(
+				// 			this.animated.backMic.opacity, // The animated value to drive
+				// 			{
+				// 				toValue: 0.33 * toSave,
+				// 				duration: 333
+				// 			}
+				// 		).start();
+				// 	});
+				// };
+			});
 		});
 	}
 
 	stopRecording() {
 		const { realtime } = this.state;
-
-		this.setState({
-			realtime: {
-				...realtime,
-				live: false
-			}
-		}, () => {
-			RNSoundLevel.stop();
-			delete RNSoundLevel.onNewFrame;
-		}
-		);
+		return this.recorder.stopRecorder()
+		.then(() => {
+			this.setState({
+				realtime: {
+					...realtime,
+					live: false
+				}
+			}, () => {
+				// RNSoundLevel.stop();
+			});
+		});
 	}
 }

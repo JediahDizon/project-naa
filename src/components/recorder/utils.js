@@ -14,6 +14,10 @@ export default {
 	 * @return int - The converted value in percentage
 	 */
 	convertDecibelToPercent(toConvert) {
-		return toConvert * 0.625 + 100;
+		// Linear
+		// return toConvert * 0.625 + 100;
+
+		// Parabolic
+		return (.0039062 * Math.pow(toConvert, 2)) + (1.25 * toConvert) + 100;
 	}
 }

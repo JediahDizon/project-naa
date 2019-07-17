@@ -249,15 +249,15 @@ export default class extends Component {
 						marginTop: height / 3
 					}}
 				>
-					<Card.Content style={{ minHeight: height / 3 }}>
-						{
-							loading ? (
+					{
+						loading ? (
+							<Card.Content>
 								<ActivityIndicator style={{ margin: 30 }} />
-							) : (
-								<Recorder />
-							)
-						}
-					</Card.Content>
+							</Card.Content>
+						) : (
+							<Recorder />
+						)
+					}
 					<Card.Actions>
 						<PaperButton icon="close" onPress={() => this.setState({ lock: false }, () => this[video.id].flip())}>Cancel</PaperButton>
 					</Card.Actions>
