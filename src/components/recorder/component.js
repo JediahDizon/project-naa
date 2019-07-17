@@ -150,34 +150,34 @@ export default class Recorder extends Component {
 				}
 			}, () => {
 				// Loudness Listeners
-				// RNSoundLevel.start();
-				// RNSoundLevel.onNewFrame = data => {
-				// 	const { histogram } = this.state;
-				// 	const toSave = Utils.convertDecibelToPercent(data.value) / 100;
+				RNSoundLevel.start();
+				RNSoundLevel.onNewFrame = data => {
+					const { histogram } = this.state;
+					const toSave = Utils.convertDecibelToPercent(data.value) / 100;
 
-				// 	this.setState({
-				// 		histogram: {
-				// 			...histogram,
-				// 			data: [...histogram.data, toSave]
-				// 		}
-				// 	}, () => {
-				// 		Animated.timing(
-				// 			this.animated.backMic.size, // The animated value to drive
-				// 			{
-				// 				toValue: 100 * toSave,
-				// 				duration: 333
-				// 			}
-				// 		).start();
+					this.setState({
+						histogram: {
+							...histogram,
+							data: [...histogram.data, toSave]
+						}
+					}, () => {
+						Animated.timing(
+							this.animated.backMic.size, // The animated value to drive
+							{
+								toValue: 100 * toSave,
+								duration: 333
+							}
+						).start();
 
-				// 		Animated.timing(
-				// 			this.animated.backMic.opacity, // The animated value to drive
-				// 			{
-				// 				toValue: 0.33 * toSave,
-				// 				duration: 333
-				// 			}
-				// 		).start();
-				// 	});
-				// };
+						Animated.timing(
+							this.animated.backMic.opacity, // The animated value to drive
+							{
+								toValue: 0.33 * toSave,
+								duration: 333
+							}
+						).start();
+					});
+				};
 			});
 		});
 	}
@@ -192,7 +192,7 @@ export default class Recorder extends Component {
 					live: false
 				}
 			}, () => {
-				// RNSoundLevel.stop();
+				RNSoundLevel.stop();
 			});
 		});
 	}

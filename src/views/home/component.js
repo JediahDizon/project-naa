@@ -98,7 +98,8 @@ export default class extends Component {
 						{ cancelable: false }
 					);
 				}
-			}
+			},
+			ios: () => {}
 		})();
 
 		// Set the play as true to make YouTube play. This is cause by the instability of the library
