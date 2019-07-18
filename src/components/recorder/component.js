@@ -1,15 +1,16 @@
 import React, { Component } from "react";
-import { View, ScrollView, FlatList, StyleSheet, Animated } from "react-native";
-import { Colors, IconButton } from "react-native-paper";
+import { Text, View, TouchableOpacity, ScrollView, FlatList, StyleSheet, Animated } from "react-native";
+import { Colors, IconButton, Button } from "react-native-paper";
 import RNSoundLevel from "react-native-sound-level";
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import WaveForm from 'react-native-audiowaveform';
+import RNFetchBlob from "rn-fetch-blob";
 
 // UTILS
 import _ from "lodash";
+import Moment from "moment";
 import Utils from "./utils";
 import { Histogram } from "./components";
-
 
 export default class Recorder extends Component {
 	constructor(props) {
@@ -32,9 +33,11 @@ export default class Recorder extends Component {
 				value: 0,
 				live: false
 			},
-			histogram: {
-				loading: false,
-				data: []
+			track: {
+				uri: `${RNFetchBlob.fs.dirs.DocumentDir}/1.m4a`,
+				tempUri: null,
+				totalTime: null,
+				playing: false
 			}
 		};
 	}
@@ -50,56 +53,60 @@ export default class Recorder extends Component {
 
 	render() {
 		return (
-			<View
-				style={{
-					flex: 1,
-					justifyContent: "center",
-					alignItems: "center"
-				}}
-			>
+			<View>
 
-				{ this.renderHistogram() }
+				{ this.renderWaveform() }
 				{ this.renderMicrophone() }
 
 			</View>
 		);
 	}
 
-	renderHistogram() {
-		const { histogram: { data }} = this.state;
+	renderWaveform() {
+		const { realtime: { live }, track: { uri, tempUri, playing }} = this.state;
 		return (
-			<React.Fragment>
-				<ScrollView
-					horizontal
-					style={{ height: 100 }}
-					ref={ref => this.histogram = ref}
-					onContentSizeChange={() => this.histogram.scrollToEnd({ animated: true })}
-				>
-					<FlatList
-						horizontal
-						data={data}
-						keyExtractor={(a, index) => `${index}`}
-						renderItem={({ item }) => (
-							<View
-								style={{
-									height: (item * 50),
-									opacity: item,
-									width: 1,
-									margin: 0,
-									borderRadius: 0,
-									backgroundColor: "red",
-								}}
-							/>
-						)}
-					/>
-				</ScrollView>
-			</React.Fragment>
+			<View
+				style={{
+					height: 100, width: "100%"
+				}}
+			>
+				{
+					!live && (
+						<WaveForm
+							source={{ uri: `file:///${uri || tempUri}` }}
+							waveFormStyle={{ waveColor: "red", scrubColor: "white" }}
+							style={{ flex: 1, backgroundColor: "rgba(0, 0, 0, 0.1)", borderRadius: 10 }}
+							play={playing}
+						/>
+					)
+				}
+
+				{
+					// <FlatList
+					// 	horizontal
+					// 	data={data}
+					// 	keyExtractor={(a, index) => `${index}`}
+					// 	renderItem={({ item }) => (
+					// 		<View
+					// 			style={{
+					// 				height: (item * 50) + 1,
+					// 				opacity: item,
+					// 				width: 3,
+					// 				margin: 1,
+					// 				borderRadius: 0,
+					// 				backgroundColor: "red",
+					// 			}}
+					// 		/>
+					// 	)}
+					// />
+				}
+			</View>
 		);
 	}
 
 	renderMicrophone() {
 		const { backMic } = this.animated;
-		const { realtime: { live }} = this.state;
+		const { realtime: { live }, playing} = this.state;
 
 		return (
 			<View
@@ -121,14 +128,15 @@ export default class Recorder extends Component {
 					/>
 				</View>
 
-				<View style={{ position: "absolute" }}>
+				<TouchableOpacity style={{ position: "absolute" }} onPress={async () => live ? await this.stopRecording() : await this.startRecording()}>
 					<IconButton
 						mode="contained"
 						icon="mic"
 						color={Colors.red500}
-						onPress={async () => live ? await this.stopRecording() : await this.startRecording()}
 					/>
-				</View>
+				</TouchableOpacity>
+
+				<Button onPress={async () => playing ? await this.onStopPlay() : await this.onStartPlay()} style={{ marginTop: 100 }}>{ this.state.track.duration }</Button>
 			</View>
 		);
 	}
@@ -136,47 +144,59 @@ export default class Recorder extends Component {
 	startRecording() {
 		const { realtime } = this.state;
 
-		let filePath = null;
 		return this.recorder.startRecorder()
-		.then(path => {
-			filePath = path;
-			console.warn(filePath);
-		})
-		.then(() => {
+		.then(async path => {
+			// if(!await RNFetchBlob.fs.exists(config.tracks[0].uri)) {
+			// 	await RNFetchBlob.fs.mkdir(config.tracks[0].uri);
+			// }
+
+			// console.warn(await await RNFetchBlob.fs.exists(config.tracks[0].uri) + " - " + await RNFetchBlob.fs.exists(path))
+
+			// return RNFetchBlob.fs.unlink(config.tracks[0].uri)
+			// .then(() => RNFetchBlob.fs.mv(path, config.tracks[0].uri))
+			// .catch(error => console.warn("MOVE FAILED: " + error.message));
+
+
 			this.setState({
 				realtime: {
 					...realtime,
 					live: true
+				},
+				track: {
+					...this.state.track,
+					tempUri: path.split("file:///")[1]
 				}
 			}, () => {
+				this.recorder.addRecordBackListener((e) => {
+					this.setState({
+						track: {
+							...this.state.track,
+							duration: this.recorder.mmssss(Math.floor(e.current_position)),
+						}
+					});
+					return;
+				});
+
 				// Loudness Listeners
 				RNSoundLevel.start();
 				RNSoundLevel.onNewFrame = data => {
-					const { histogram } = this.state;
 					const toSave = Utils.convertDecibelToPercent(data.value) / 100;
 
-					this.setState({
-						histogram: {
-							...histogram,
-							data: [...histogram.data, toSave]
+					Animated.timing(
+						this.animated.backMic.size, // The animated value to drive
+						{
+							toValue: 100 * toSave,
+							duration: 333
 						}
-					}, () => {
-						Animated.timing(
-							this.animated.backMic.size, // The animated value to drive
-							{
-								toValue: 100 * toSave,
-								duration: 333
-							}
-						).start();
+					).start();
 
-						Animated.timing(
-							this.animated.backMic.opacity, // The animated value to drive
-							{
-								toValue: 0.33 * toSave,
-								duration: 333
-							}
-						).start();
-					});
+					Animated.timing(
+						this.animated.backMic.opacity, // The animated value to drive
+						{
+							toValue: 0.33 * toSave,
+							duration: 333
+						}
+					).start();
 				};
 			});
 		});
@@ -191,9 +211,57 @@ export default class Recorder extends Component {
 					...realtime,
 					live: false
 				}
-			}, () => {
+			}, async () => {
+				const { track: { uri, tempUri }} = this.state;
 				RNSoundLevel.stop();
+
+				if(!await RNFetchBlob.fs.exists(uri)) {
+					await RNFetchBlob.fs.mkdir(uri);
+				}
+
+				return RNFetchBlob.fs.unlink(uri)
+				.then(() => RNFetchBlob.fs.mv(tempUri, uri))
+				.catch(error => console.warn("MOVE FAILED: " + error.message));
 			});
+		});
+	}
+
+	onStartPlay = async () => {
+		console.warn("Start");
+
+		const { track: { uri }} = this.state;
+		const msg = await this.recorder.startPlayer(`file:///${uri}`).catch(error => console.warn("START ERROR: " + error.message));
+		console.warn(msg);
+
+		this.setState({
+			track: {
+				...this.state.track,
+				playing: true
+			}
+		});
+
+		this.recorder.addPlayBackListener(e => {
+			console.warn(e.current_position + " - " + e.duration);
+
+			if (e.current_position >= e.duration) {
+				this.recorder.stopPlayer();
+			}
+		});
+	}
+
+	onPausePlay = async () => {
+		await this.recorder.pausePlayer();
+	}
+
+	onStopPlay = async () => {
+		console.warn("Stop");
+		this.recorder.stopPlayer();
+
+		this.setState({
+			track: {
+				...this.state.track,
+				playing: false
+			}
 		});
 	}
 }
