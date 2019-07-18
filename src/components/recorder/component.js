@@ -76,7 +76,6 @@ export default class Recorder extends Component {
 							source={{ uri: `file:///${uri || tempUri}` }}
 							waveFormStyle={{ waveColor: "red", scrubColor: "white" }}
 							style={{ flex: 1, backgroundColor: "rgba(0, 0, 0, 0.1)", borderRadius: 10 }}
-							play={playing}
 						/>
 					)
 				}
@@ -106,7 +105,7 @@ export default class Recorder extends Component {
 
 	renderMicrophone() {
 		const { backMic } = this.animated;
-		const { realtime: { live }, playing} = this.state;
+		const { realtime: { live }, track: { playing }} = this.state;
 
 		return (
 			<View
@@ -164,7 +163,7 @@ export default class Recorder extends Component {
 				},
 				track: {
 					...this.state.track,
-					tempUri: path.split("file:///")[1]
+					tempUri: path.split("file:///")[1],
 				}
 			}, () => {
 				this.recorder.addRecordBackListener((e) => {
@@ -174,7 +173,6 @@ export default class Recorder extends Component {
 							duration: this.recorder.mmssss(Math.floor(e.current_position)),
 						}
 					});
-					return;
 				});
 
 				// Loudness Listeners
@@ -219,8 +217,8 @@ export default class Recorder extends Component {
 					await RNFetchBlob.fs.mkdir(uri);
 				}
 
-				return RNFetchBlob.fs.unlink(uri)
-				.then(() => RNFetchBlob.fs.mv(tempUri, uri))
+				return RNFetchBlob.fs.unlink(uri) // Delete the file that was created by the prior `mkdir` function call
+				.then(() => RNFetchBlob.fs.cp(tempUri, uri))
 				.catch(error => console.warn("MOVE FAILED: " + error.message));
 			});
 		});
@@ -229,9 +227,7 @@ export default class Recorder extends Component {
 	onStartPlay = async () => {
 		console.warn("Start");
 
-		const { track: { uri }} = this.state;
-		const msg = await this.recorder.startPlayer(`file:///${uri}`).catch(error => console.warn("START ERROR: " + error.message));
-		console.warn(msg);
+		await this.recorder.startPlayer().catch(error => console.warn("START ERROR: " + error.message));
 
 		this.setState({
 			track: {
@@ -241,10 +237,21 @@ export default class Recorder extends Component {
 		});
 
 		this.recorder.addPlayBackListener(e => {
-			console.warn(e.current_position + " - " + e.duration);
+			e = {
+				...e,
+				current_position: Number(e.current_position),
+				duration: Number(e.duration)
+			};
 
 			if (e.current_position >= e.duration) {
 				this.recorder.stopPlayer();
+
+				this.setState({
+					track: {
+						...this.state.track,
+						playing: false
+					}
+				});
 			}
 		});
 	}
