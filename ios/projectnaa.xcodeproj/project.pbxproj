@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -67,6 +66,7 @@
 		ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED297162215061F000B7C4FE /* JavaScriptCore.framework */; };
 		ED2971652150620600B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED2971642150620600B7C4FE /* JavaScriptCore.framework */; };
 		F3E9E2EB5BA64EE98A567EB6 /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 36F8378DF50744DEAD20AB74 /* libRNFetchBlob.a */; };
+		A153C421868340F38349E7B2 /* libRNBlur.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 122784AEA30D4912B00BBC05 /* libRNBlur.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -494,6 +494,8 @@
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		F7396BEFAFCE47D590B7BCDC /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		FDBB96183CBB4BF0A61C9954 /* OGReactNativeWaveform.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = OGReactNativeWaveform.xcodeproj; path = "../node_modules/react-native-audiowaveform/ios/OGReactNativeWaveform.xcodeproj"; sourceTree = "<group>"; };
+		AB388106E43D4E019753E818 /* RNBlur.xcodeproj */ = {isa = PBXFileReference; name = "RNBlur.xcodeproj"; path = "../node_modules/react-native-blur/ios/RNBlur.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		122784AEA30D4912B00BBC05 /* libRNBlur.a */ = {isa = PBXFileReference; name = "libRNBlur.a"; path = "libRNBlur.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -531,6 +533,7 @@
 				2FC5B727CA2D44ACB8DDA7A8 /* libRNSoundLevel.a in Frameworks */,
 				B67D055BCA834FFAAF401822 /* libOGReactNativeWaveform.a in Frameworks */,
 				E5832D7E0BDA48A58F47D25B /* libRNAudioRecorderPlayer.a in Frameworks */,
+				A153C421868340F38349E7B2 /* libRNBlur.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -847,6 +850,7 @@
 				1D1F3967E04B4482907176F7 /* RNSoundLevel.xcodeproj */,
 				FDBB96183CBB4BF0A61C9954 /* OGReactNativeWaveform.xcodeproj */,
 				9F5DF18713C346D6B6DB997D /* RNAudioRecorderPlayer.xcodeproj */,
+				AB388106E43D4E019753E818 /* RNBlur.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1614,12 +1618,14 @@
 					"$(SRCROOT)..\node_modules\neact-native-sound-level/**",
 					"$(SRCROOT)..\node_modules\neact-native-audiowaveformios/**",
 					"$(SRCROOT)..\node_modules\neact-native-audio-recorder-playerios",
+					"$(SRCROOT)\..\node_modules\react-native-blur\ios",
 				);
 				INFOPLIST_FILE = projectnaaTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1651,12 +1657,14 @@
 					"$(SRCROOT)..\node_modules\neact-native-sound-level/**",
 					"$(SRCROOT)..\node_modules\neact-native-audiowaveformios/**",
 					"$(SRCROOT)..\node_modules\neact-native-audio-recorder-playerios",
+					"$(SRCROOT)\..\node_modules\react-native-blur\ios",
 				);
 				INFOPLIST_FILE = projectnaaTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1690,6 +1698,7 @@
 					"$(SRCROOT)..\node_modules\neact-native-sound-level/**",
 					"$(SRCROOT)..\node_modules\neact-native-audiowaveformios/**",
 					"$(SRCROOT)..\node_modules\neact-native-audio-recorder-playerios",
+					"$(SRCROOT)\..\node_modules\react-native-blur\ios",
 				);
 				INFOPLIST_FILE = projectnaa/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1722,6 +1731,7 @@
 					"$(SRCROOT)..\node_modules\neact-native-sound-level/**",
 					"$(SRCROOT)..\node_modules\neact-native-audiowaveformios/**",
 					"$(SRCROOT)..\node_modules\neact-native-audio-recorder-playerios",
+					"$(SRCROOT)\..\node_modules\react-native-blur\ios",
 				);
 				INFOPLIST_FILE = projectnaa/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1760,11 +1770,13 @@
 					"$(SRCROOT)..\node_modules\neact-native-sound-level/**",
 					"$(SRCROOT)..\node_modules\neact-native-audiowaveformios/**",
 					"$(SRCROOT)..\node_modules\neact-native-audio-recorder-playerios",
+					"$(SRCROOT)\..\node_modules\react-native-blur\ios",
 				);
 				INFOPLIST_FILE = "projectnaa-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1805,11 +1817,13 @@
 					"$(SRCROOT)..\node_modules\neact-native-sound-level/**",
 					"$(SRCROOT)..\node_modules\neact-native-audiowaveformios/**",
 					"$(SRCROOT)..\node_modules\neact-native-audio-recorder-playerios",
+					"$(SRCROOT)\..\node_modules\react-native-blur\ios",
 				);
 				INFOPLIST_FILE = "projectnaa-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1849,11 +1863,13 @@
 					"$(SRCROOT)..\node_modules\neact-native-sound-level/**",
 					"$(SRCROOT)..\node_modules\neact-native-audiowaveformios/**",
 					"$(SRCROOT)..\node_modules\neact-native-audio-recorder-playerios",
+					"$(SRCROOT)\..\node_modules\react-native-blur\ios",
 				);
 				INFOPLIST_FILE = "projectnaa-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1893,11 +1909,13 @@
 					"$(SRCROOT)..\node_modules\neact-native-sound-level/**",
 					"$(SRCROOT)..\node_modules\neact-native-audiowaveformios/**",
 					"$(SRCROOT)..\node_modules\neact-native-audio-recorder-playerios",
+					"$(SRCROOT)\..\node_modules\react-native-blur\ios",
 				);
 				INFOPLIST_FILE = "projectnaa-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",

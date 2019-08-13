@@ -3,14 +3,11 @@ import { Text, View, TouchableOpacity, ScrollView, FlatList, StyleSheet, Animate
 import { Colors, IconButton, Button } from "react-native-paper";
 import RNSoundLevel from "react-native-sound-level";
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
-import WaveForm from 'react-native-audiowaveform';
 import RNFetchBlob from "rn-fetch-blob";
 
 // UTILS
 import _ from "lodash";
-import Moment from "moment";
-import Utils from "./utils";
-import { Histogram } from "./components";
+import { Scrubber } from "./components";
 
 export default class Recorder extends Component {
 	constructor(props) {
@@ -36,7 +33,7 @@ export default class Recorder extends Component {
 			track: {
 				uri: `${RNFetchBlob.fs.dirs.DocumentDir}/1.m4a`,
 				tempUri: null,
-				totalTime: null,
+				duration: null,
 				playing: false
 			}
 		};
@@ -63,7 +60,7 @@ export default class Recorder extends Component {
 	}
 
 	renderWaveform() {
-		const { realtime: { live }, track: { uri, tempUri, playing }} = this.state;
+		const { realtime: { live }, track: { uri, duration, playing }} = this.state;
 		return (
 			<View
 				style={{
@@ -72,10 +69,10 @@ export default class Recorder extends Component {
 			>
 				{
 					!live && (
-						<WaveForm
-							source={{ uri: `file:///${uri || tempUri}` }}
-							waveFormStyle={{ waveColor: "red", scrubColor: "white" }}
-							style={{ flex: 1, backgroundColor: "rgba(0, 0, 0, 0.1)", borderRadius: 10 }}
+						<Scrubber
+							source={uri}
+							duration={duration}
+							onScrub={value => (!playing && this.onStartPlayback()) || this.recorder.seekToPlayer(value / 1000)}
 						/>
 					)
 				}
@@ -135,7 +132,7 @@ export default class Recorder extends Component {
 					/>
 				</TouchableOpacity>
 
-				<Button onPress={async () => playing ? await this.onStopPlay() : await this.onStartPlay()} style={{ marginTop: 100 }}>{ this.state.track.duration }</Button>
+				<Button onPress={async () => playing ? this.onStopPlayback() : this.onStartPlayback()} style={{ marginTop: 100 }}>{ this.recorder.mmssss(this.state.track.duration) || "00:00" }</Button>
 			</View>
 		);
 	}
@@ -170,32 +167,32 @@ export default class Recorder extends Component {
 					this.setState({
 						track: {
 							...this.state.track,
-							duration: this.recorder.mmssss(Math.floor(e.current_position)),
+							duration: Math.floor(e.current_position),
 						}
 					});
 				});
 
-				// Loudness Listeners
-				RNSoundLevel.start();
-				RNSoundLevel.onNewFrame = data => {
-					const toSave = Utils.convertDecibelToPercent(data.value) / 100;
+				// // Loudness Listeners
+				// RNSoundLevel.start();
+				// RNSoundLevel.onNewFrame = data => {
+				// 	const toSave = Utils.convertDecibelToPercent(data.value) / 100;
 
-					Animated.timing(
-						this.animated.backMic.size, // The animated value to drive
-						{
-							toValue: 100 * toSave,
-							duration: 333
-						}
-					).start();
+				// 	Animated.timing(
+				// 		this.animated.backMic.size, // The animated value to drive
+				// 		{
+				// 			toValue: 100 * toSave,
+				// 			duration: 333
+				// 		}
+				// 	).start();
 
-					Animated.timing(
-						this.animated.backMic.opacity, // The animated value to drive
-						{
-							toValue: 0.33 * toSave,
-							duration: 333
-						}
-					).start();
-				};
+				// 	Animated.timing(
+				// 		this.animated.backMic.opacity, // The animated value to drive
+				// 		{
+				// 			toValue: 0.33 * toSave,
+				// 			duration: 333
+				// 		}
+				// 	).start();
+				// };
 			});
 		});
 	}
@@ -224,18 +221,7 @@ export default class Recorder extends Component {
 		});
 	}
 
-	onStartPlay = async () => {
-		console.warn("Start");
-
-		await this.recorder.startPlayer().catch(error => console.warn("START ERROR: " + error.message));
-
-		this.setState({
-			track: {
-				...this.state.track,
-				playing: true
-			}
-		});
-
+	onStartPlayback() {
 		this.recorder.addPlayBackListener(e => {
 			e = {
 				...e,
@@ -254,21 +240,25 @@ export default class Recorder extends Component {
 				});
 			}
 		});
+
+		this.setState({
+			track: {
+				...this.state.track,
+				playing: true
+			}
+		}, async () => await this.recorder.startPlayer().catch(error => console.warn("START ERROR: " + error.message)));
 	}
 
 	onPausePlay = async () => {
 		await this.recorder.pausePlayer();
 	}
 
-	onStopPlay = async () => {
-		console.warn("Stop");
-		this.recorder.stopPlayer();
-
+	onStopPlayback() {
 		this.setState({
 			track: {
 				...this.state.track,
 				playing: false
 			}
-		});
+		}, async () => await this.recorder.stopPlayer());
 	}
 }

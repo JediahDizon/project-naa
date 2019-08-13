@@ -3,6 +3,7 @@ package com.projectnaa;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.cmcewen.blurview.BlurViewPackage;
 import com.dooboolab.RNAudioRecorderPlayerPackage;
 import com.otomogroove.OGReactNativeWaveform.OGWavePackage;
 import com.punarinta.RNSoundLevel.RNSoundLevel;
@@ -33,6 +34,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new BlurViewPackage(),
             new RNAudioRecorderPlayerPackage(),
             new OGWavePackage(),
             new RNSoundLevel(),

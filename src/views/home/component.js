@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, ScrollView, Dimensions, TouchableWithoutFeedback, ActivityIndicator, Platform, PermissionsAndroid, Alert } from "react-native";
+import { View, ScrollView, Dimensions, TouchableWithoutFeedback, TouchableOpacity, ActivityIndicator, Platform, PermissionsAndroid, Alert } from "react-native";
 import { Actions } from "react-native-router-flux";
 import Swiper from "react-native-deck-swiper";
 import { Card, Text, Button as PaperButton, Avatar, Paragraph } from "react-native-paper";
@@ -23,7 +23,7 @@ const playback = {
 export default class extends Component {
 	constructor(props) {
 		super(props);
-		this.videoIds = ["KVZ-P-ZI6W4", "GUAWDEVjBYM", "Hy0W7AqDC_c", "cnevlbEy-Qo"];
+		this.videoIds = ["YrpK90bHO2U", "9FnO3igOkOk", "KxoJQx_MgAc", "TMSIR210mRg"];
 		this.state = {
 			lock: false,
 			video: {
@@ -137,9 +137,9 @@ export default class extends Component {
 							cards={data}
 							stackSize= {3}
 							stackSeparation={5}
-							renderCard={card => this.renderCard(card)}
 							onSwiped={index => this.setState({ video: { ...video, id: _.get(data, `${index === _.size(data) - 1 ? 0 : index + 1}.id`) } })}
 							backgroundColor="rgba(0, 0, 0, 0)"
+							renderCard={card => this.renderCard(card)}
 						>
 							{/* Temporary fix to the cards not rerendering */}
 							<Text style={{ opacity: 0 }}>{ JSON.stringify(this.state.video, null, "\t") }</Text>
@@ -154,7 +154,7 @@ export default class extends Component {
 						play={video.play}
 						loop={true}
 
-						controls={2}
+						controls={1}
 						showFullscreenButton={false}
 						showInfo={false}
 						modestBranding={false}
@@ -162,7 +162,7 @@ export default class extends Component {
 						resumePlayAndroid={false}
 
 						onReady={e => this.setState({ video: { ...video, ready: true } })}
-						onChangeState={e => this.setState({ video: { ...video, play: e.state === playback.PLAYING, state: e.state } })}
+						onChangeState={e => this.setState({ video: { ...video, state: e.state } })}
 						onError={e => this.setState({ video: { ...video, error: e.error } })}
 
 						style={{ flex: 1, height: height / 3, zIndex: 10 }}
@@ -216,14 +216,22 @@ export default class extends Component {
 								<ActivityIndicator style={{ margin: 30 }} />
 							) : (
 								<React.Fragment>
-									<Card.Title title={snippet.title} subtitle={Moment(snippet.publishedAt).format("LL")} left={(props) => <Avatar.Icon {...props} icon="close" />} />
+									<Card.Title
+										title={snippet.title}
+										subtitle={Moment(snippet.publishedAt).format("LL")}
+										left={(props) => (
+											<TouchableOpacity onPress={() => this.setState({ lock: true }, () => this[video.id].flip())}>
+												<Avatar.Icon {...props} icon="mic" />
+											</TouchableOpacity>
+										)}
+									/>
 
 									<Card.Content style={{ minHeight: height / 3 }}>
 										<Paragraph>{ snippet.description }</Paragraph>
 									</Card.Content>
 
 									<Card.Actions>
-										<PaperButton icon="close" onPress={() => this.setState({ lock: true }, () => this[video.id].flip())}>Cancel</PaperButton>
+										<PaperButton color="red" icon="mic" onPress={() => this.setState({ lock: true }, () => this[video.id].flip())}>Record</PaperButton>
 									</Card.Actions>
 								</React.Fragment>
 							)
