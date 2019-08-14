@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { Text, View, TouchableOpacity, ScrollView, FlatList, StyleSheet, Animated } from "react-native";
+import RNFetchBlob from "rn-fetch-blob";
 import { Colors, IconButton, Button } from "react-native-paper";
 import RNSoundLevel from "react-native-sound-level";
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
-import RNFetchBlob from "rn-fetch-blob";
 
 // UTILS
 import _ from "lodash";
@@ -34,7 +34,8 @@ export default class Recorder extends Component {
 				uri: `${RNFetchBlob.fs.dirs.DocumentDir}/1.m4a`,
 				tempUri: null,
 				duration: null,
-				playing: false
+				playing: false,
+				cursor: 0 // Used for scrubbing the track
 			}
 		};
 	}
@@ -60,7 +61,8 @@ export default class Recorder extends Component {
 	}
 
 	renderWaveform() {
-		const { realtime: { live }, track: { uri, duration, playing }} = this.state;
+		const { duration, onSeek } = this.props;
+		const { realtime: { live }, track: { duration: trackDuration, cursor, uri, playing }} = this.state;
 		return (
 			<View
 				style={{
@@ -71,30 +73,27 @@ export default class Recorder extends Component {
 					!live && (
 						<Scrubber
 							source={uri}
+							value={cursor}
 							duration={duration}
-							onScrub={value => (!playing && this.onStartPlayback()) || this.recorder.seekToPlayer(value / 1000)}
+							onScrub={value => {
+								// On scrub, prevent playing the recorded audio when the scrubber exceeds the duration of the recording
+								if(value < trackDuration) {
+									if(!playing) this.onStartPlayback();
+									this.recorder.seekToPlayer(value / 1000);
+								} else {
+									playing && this.onStopPlayback();
+								}
+
+								this.setState({
+									track: {
+										...this.state.track,
+										cursor: value
+									}
+								});
+							}}
+							onSlidingComplete={value => _.isFunction(onSeek) && onSeek(value)}
 						/>
 					)
-				}
-
-				{
-					// <FlatList
-					// 	horizontal
-					// 	data={data}
-					// 	keyExtractor={(a, index) => `${index}`}
-					// 	renderItem={({ item }) => (
-					// 		<View
-					// 			style={{
-					// 				height: (item * 50) + 1,
-					// 				opacity: item,
-					// 				width: 3,
-					// 				margin: 1,
-					// 				borderRadius: 0,
-					// 				backgroundColor: "red",
-					// 			}}
-					// 		/>
-					// 	)}
-					// />
 				}
 			</View>
 		);
@@ -102,7 +101,7 @@ export default class Recorder extends Component {
 
 	renderMicrophone() {
 		const { backMic } = this.animated;
-		const { realtime: { live }, track: { playing }} = this.state;
+		const { realtime: { live }, track: { duration, cursor, playing }} = this.state;
 
 		return (
 			<View
@@ -132,7 +131,7 @@ export default class Recorder extends Component {
 					/>
 				</TouchableOpacity>
 
-				<Button onPress={async () => playing ? this.onStopPlayback() : this.onStartPlayback()} style={{ marginTop: 100 }}>{ this.recorder.mmssss(this.state.track.duration) || "00:00" }</Button>
+				<Button icon="play-arrow" onPress={async () => playing ? this.onStopPlayback() : this.onStartPlayback()} style={{ marginTop: 100 }}>{ this.recorder.mmssss(cursor) } - { this.recorder.mmssss(duration) }</Button>
 			</View>
 		);
 	}
@@ -222,6 +221,7 @@ export default class Recorder extends Component {
 	}
 
 	onStartPlayback() {
+		this.recorder.removePlayBackListener();
 		this.recorder.addPlayBackListener(e => {
 			e = {
 				...e,
@@ -236,6 +236,13 @@ export default class Recorder extends Component {
 					track: {
 						...this.state.track,
 						playing: false
+					}
+				});
+			} else {
+				this.setState({
+					track: {
+						...this.state.track,
+						cursor: e.current_position
 					}
 				});
 			}

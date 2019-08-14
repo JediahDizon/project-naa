@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { View, Slider } from "react-native";
+import { View } from "react-native";
 import WaveForm from "react-native-audiowaveform";
+import { Slider } from "react-native-elements";
 
 export default class extends Component {
 	constructor(props) {
@@ -8,7 +9,7 @@ export default class extends Component {
 	}
 
 	render() {
-		const { source, duration, currentTime } = this.props;
+		const { source, duration, value, onScrub, onSlidingComplete } = this.props;
 
 		return (
 			<View style={{ flex: 1 }}>
@@ -19,10 +20,22 @@ export default class extends Component {
 				/>
 
 				<Slider
-					step={1}
+					value={value}
+					minimumValue={0}
 					maximumValue={duration}
-					onValueChange={value => this.props.onScrub(value)}
-					value={currentTime}
+					onSlidingComplete={value => onSlidingComplete && onSlidingComplete(value)}
+					onValueChange={value => onScrub(value)}
+
+					thumbTouchSize={{
+						height: 100,
+						width: 100
+					}}
+					thumbStyle={{
+						width: 1,
+						height: 10
+					}}
+
+					animateTransitions
 				/>
 			</View>
 		);

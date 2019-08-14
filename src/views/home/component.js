@@ -23,7 +23,7 @@ const playback = {
 export default class extends Component {
 	constructor(props) {
 		super(props);
-		this.videoIds = ["YrpK90bHO2U", "9FnO3igOkOk", "KxoJQx_MgAc", "TMSIR210mRg"];
+		this.videoIds = ["q6EoRBvdVPQ", "8YWl7tDGUPA", "cuNhfSM-144", "SBeYzoQPbu8"];
 		this.state = {
 			lock: false,
 			video: {
@@ -263,7 +263,10 @@ export default class extends Component {
 							loading ? (
 								<ActivityIndicator style={{ margin: 30 }} />
 							) : (
-								<Recorder />
+								<Recorder
+									duration={Moment.duration(video.contentDetails.duration).asMilliseconds()}
+									onSeek={value => this.YouTube.seekTo(value / 1000)}
+								/>
 							)
 						}
 					</Card.Content>
