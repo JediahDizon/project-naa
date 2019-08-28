@@ -6,5 +6,8 @@ Still no idea on what to name this. Project Naa is a voice acting utility that h
 - React Native Youtube
 - Realm Database
 
+### Screenshot
+[Click HERE to download video footage](https://github.com/JediahDizon/project-naa/raw/master/doc/media/Main.mp4)
+
 ### To Do
 Considering this is a passion project, most of the time spent on this repository are to get past the lurning curve of using the recording capability of the mobile devices. I have gone well past it already and ready to implement a better project and code structure.
